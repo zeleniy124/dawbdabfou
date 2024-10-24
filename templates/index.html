@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Chat</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Full screen background */
+        body {
+            background-image: url('/static/peter_backgif.gif'); /* Replace with your image */
+            background-size: cover;
+            background-position: center;
+            font-family: monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ASCII art at the top */
+        .ascii-art {
+            color: limegreen;
+            stroke: black;
+            stroke-width: 3px;
+            font-size: 12px;
+            text-align: center;
+            white-space: pre; /* To preserve the ASCII text formatting */
+            margin-bottom: 20px;
+        }
+
+        /* Links under the ASCII art */
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .links a {
+            color: white;
+            text-decoration: none;
+            font-family: monospace;
+            font-size: 18px;
+        }
+
+        /* Container for GIFs and terminal */
+        .terminal-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* GIF styling */
+        .side-gif {
+            width: 150px;
+            height: auto;
+        }
+
+        /* Terminal-like box */
+        .terminal {
+            background-image: url('/static/transp_griffin.png');
+            background-size: cover;
+            background-position: center;
+            font-family: monospace;
+            color: limegreen;
+            width: 600px;
+            height: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 255, 0, 0.5);
+            overflow: auto;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        /* Styling the input area */
+        .terminal-input {
+            width: 100%;
+            background-color: black;
+            color: limegreen;
+            border: none;
+            outline: none;
+            font-family: monospace;
+            font-size: 16px;
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        /* Terminal cursor blink effect */
+        .cursor {
+            display: inline-block;
+            background-color: limegreen;
+            width: 10px;
+            height: 20px;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ASCII Art -->
+    <div class="ascii-art">
+        <pre>
+  /$$$$$$            /$$  /$$$$$$   /$$$$$$  /$$                        /$$$$$$  /$$$$$$
+ /$$__  $$          |__/ /$$__  $$ /$$__  $$|__/                       /$$__  $$|_  $$_/
+| $$  \__/  /$$$$$$  /$$| $$  \__/| $$  \__/ /$$ /$$$$$$$             | $$  \ $$  | $$
+| $$ /$$$$ /$$__  $$| $$| $$$$    | $$$$    | $$| $$__  $$            | $$$$$$$$  | $$
+| $$|_  $$| $$  \__/| $$| $$_/    | $$_/    | $$| $$  \ $$            | $$__  $$  | $$
+| $$  \ $$| $$      | $$| $$      | $$      | $$| $$  | $$            | $$  | $$  | $$
+|  $$$$$$/| $$      | $$| $$      | $$      | $$| $$  | $$            | $$  | $$ /$$$$$$
+ \______/ |__/      |__/|__/      |__/      |__/|__/  |__/            |__/  |__/|______/
+        </pre>
+    </div>
+
+    <!-- Links below ASCII art -->
+    <div class="links">
+        <a href="#link1">[pumpfun]</a>
+        <a href="#link2">[twitter]</a>
+        <a href="#link3">[telegram]</a>
+    </div>
+
+    <!-- GIFs and Terminal Container -->
+    <div class="terminal-container">
+        <img src="/static/peter2.gif" alt="Left GIF" class="side-gif">
+        <div class="terminal">
+            <div id="terminal-output">
+                <p>Welcome to the Griffin terminal! Talk with Peter:</p>
+            </div>
+            <input type="text" class="terminal-input" id="terminal-input" autofocus placeholder="Type here...">
+            <div class="cursor"></div>
+        </div>
+        <img src="/static/peter2.gif" alt="Right GIF" class="side-gif">
+    </div>
+
+    <script>
+        // JS for handling input and output
+        const inputField = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+
+        inputField.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const userMessage = inputField.value;
+                terminalOutput.innerHTML += `<p><strong>Degen:</strong> ${userMessage}</p>`;
+                inputField.value = '';
+
+                // Example of sending a request to the server (API)
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    terminalOutput.innerHTML += `<p><strong>Peter:</strong> ${data.reply}</p>`;
+                })
+                .catch(error => {
+                    terminalOutput.innerHTML += `<p><strong>Error:</strong> ${error}</p>`;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
